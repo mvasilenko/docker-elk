@@ -8,8 +8,8 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
@@ -22,7 +22,7 @@ services:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
@@ -36,11 +36,23 @@ services:
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     ports:
-      - "5601:5601"
+      - "127.0.0.1:5601:5601"
     networks:
       - elk
     depends_on:
       - elasticsearch
+
+  nginx-kibana:
+    build:
+      context: nginx/
+    ports:
+      - "8443:8443"
+    networks:
+      - elk
+    links:
+      - kibana
+    restart: always
+
 
 networks:
 
