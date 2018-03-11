@@ -7,6 +7,7 @@ services:
       context: elasticsearch/
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - /var/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
       - "127.0.0.1:9200:9200"
       - "127.0.0.1:9300:9300"
@@ -42,15 +43,17 @@ services:
     depends_on:
       - elasticsearch
 
-  nginx-kibana:
+  nginx:
     build:
       context: nginx/
     ports:
       - "8443:8443"
+      - "public.ip:9200:9200"
     networks:
       - elk
     links:
       - kibana
+      - elasticsearch
     restart: always
 
 
